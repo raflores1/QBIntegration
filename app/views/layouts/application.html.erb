@@ -9,6 +9,20 @@
   </head>
 
   <body>
+<%unless session[:token]%>
+  <ipp:connectToIntuit></ipp:connectToIntuit>
+<% end %>
+
+<%if notice %>
+<div style="padding: 10px;background: gainsboro; fontweight: 900;width: 50%;"><% notice %></div>
+<% end %>
     <%= yield %>
+
+<script type="text/javascript" src="https://appcenter.intuit.com/Content/IA/intuit.ipp.anywhere.js"></script>
+
+<!-- configure the Intuit object: 'grantUrl' is a URL in your application which kicks off the flow, see below -->
+<script>
+intuit.ipp.anywhere.setup({menuProxy: '/path/to/blue-dot', grantUrl: <%'authenticate_suppliers_url'%>});
+</script>
   </body>
 </html>
