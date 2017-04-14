@@ -4,6 +4,7 @@ class SuppliersController < ApplicationController
   # GET /suppliers
   # GET /suppliers.json
   def index
+    re
     @suppliers = Supplier.all
   end
 
@@ -63,16 +64,17 @@ class SuppliersController < ApplicationController
 
   def authenticate
     callback = oauth_callback_suppliers_url
-    token = QB_OAUTH_CONSUMER.get_request_token(:oauth_callback => callback)
+    token = $qb_oauth_consumer.get_request_token(:oauth_callback => callback)
     session[:qb_request_token] = token
     redirect_to("https://appcenter.intuit.com/Connect/Begin?oauth_token=#{token.token}") and return
   end
 
 def oauth_callback
 	at = session[:qb_request_token].get_access_token(:oauth_verifier => params[:oauth_verifier])
-	token = at.token
-	secret = at.secret
-	realm_id = params['realmId']
+	session[:token] = at.token
+	session[:secret] = at.secret
+	session[:realm_id] = params['realmId']
+  redirect_to root_url, notice: "Your Quickbooks Account has been succesfully linked"
 	# store the token, secret & RealmID somewhere for this user, you will need all 3 to work with Quickbooks-Ruby
 end
 
