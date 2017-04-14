@@ -4,7 +4,6 @@ class SuppliersController < ApplicationController
   # GET /suppliers
   # GET /suppliers.json
   def index
-    reset_session
     @suppliers = Supplier.all
   end
 
@@ -64,7 +63,7 @@ class SuppliersController < ApplicationController
 
   def authenticate
     callback = oauth_callback_suppliers_url
-    token = $qb_oauth_consumer.get_request_token(:oauth_callback => callback)
+    token = QB_OAUTH_CONSUMER.get_request_token(:oauth_callback => callback)
     session[:qb_request_token] = token
     redirect_to("https://appcenter.intuit.com/Connect/Begin?oauth_token=#{token.token}") and return
   end
