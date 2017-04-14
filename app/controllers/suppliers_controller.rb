@@ -4,7 +4,7 @@ class SuppliersController < ApplicationController
   # GET /suppliers
   # GET /suppliers.json
   def index
-    re
+    reset_session
     @suppliers = Supplier.all
   end
 
