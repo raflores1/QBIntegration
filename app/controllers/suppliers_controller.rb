@@ -64,12 +64,12 @@ class SuppliersController < ApplicationController
   def authenticate
     callback = oauth_callback_suppliers_url
     token = QB_OAUTH_CONSUMER.get_request_token(:oauth_callback => callback)
-    session[:qb_request_token] = token
+    session[:qb_request_token] = Marshal.dump(token)
     redirect_to("https://appcenter.intuit.com/Connect/Begin?oauth_token=#{token.token}") and return
   end
 
 def oauth_callback
-	at = session[:qb_request_token].get_access_token(:oauth_verifier => params[:oauth_verifier])
+	at = Marshal.load(session[:qb_request_token]).get_access_token(:oauth_verifier => params[:oauth_verifier])
 	session[:token] = at.token
 	session[:secret] = at.secret
 	session[:realm_id] = params['realmId']
