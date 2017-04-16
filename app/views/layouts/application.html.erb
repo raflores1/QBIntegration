@@ -9,20 +9,32 @@
   </head>
 
   <body>
-<%unless session[:token]%>
+<% unless session[:token] %>
   <ipp:connectToIntuit></ipp:connectToIntuit>
 <% end %>
 
 <%if notice %>
-<div style="padding: 10px;background: gainsboro; fontweight: 900;width: 50%;"><% notice %></div>
+    <div style="padding: 10px;background: gainsboro; fontweight: 900;width: 50%;"><% notice %></div>
 <% end %>
     <%= yield %>
 
-<script type="text/javascript" src="https://appcenter.intuit.com/Content/IA/intuit.ipp.anywhere.js"></script>
+<script
+     type="text/javascript"
+     src="https://appcenter.intuit.com/Content/IA/intuit.ipp.anywhere-1.3.5.js">
+</script>
 
 <!-- configure the Intuit object: 'grantUrl' is a URL in your application which kicks off the flow, see below -->
-<script>
-intuit.ipp.anywhere.setup({menuProxy: '/path/to/blue-dot', grantUrl: '<%=authenticate_suppliers_url %>'});
+<script type="text/javascript">
+    intuit.ipp.anywhere.setup({
+            grantUrl: '<%=authenticate_suppliers_url %>',
+            datasources: {
+                 quickbooks : true,
+                 payments : false
+           },
+            paymentOptions:{
+                  intuitReferred : false
+           }
+    });
 </script>
   </body>
 </html>
