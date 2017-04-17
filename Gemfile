@@ -21,8 +21,9 @@ gem 'coffee-rails', '~> 4.2'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
-gem 'quickbooks-ruby'
-gem 'oauth-plugin'
+gem 'qbo_api'
+gem 'omniauth'
+gem 'omniauth-quickbooks'
 
 gem 'figaro', '~> 1.1', '>= 1.1.1'
 
