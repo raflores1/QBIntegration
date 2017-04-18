@@ -9,6 +9,9 @@
   </head>
 
   <body>
+  <% if session[:token]%>
+  <p><%= @auth_data %></p>
+  <% end %>
 <% unless session[:token] %>
   <ipp:connectToIntuit></ipp:connectToIntuit>
 <% end %>
@@ -26,7 +29,7 @@
 <!-- configure the Intuit object: 'grantUrl' is a URL in your application which kicks off the flow, see below -->
 <script type="text/javascript">
     intuit.ipp.anywhere.setup({
-            grantUrl: '<%=authenticate_suppliers_url %>',
+            grantUrl: '<%= auth_quickbooks_url %>',
             datasources: {
                  quickbooks : true,
                  payments : false

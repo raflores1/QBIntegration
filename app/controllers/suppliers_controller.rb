@@ -1,11 +1,13 @@
 class SuppliersController < ApplicationController
-  before_action :set_supplier, only: [:show, :edit, :update, :destroy]
+  before_action :set_supplier,  only: [:show, :edit, :update, :destroy]
+  # before_action :set_qbo, only: [:edit, :update, :destroy, :create]
 
   # GET /suppliers
   # GET /suppliers.json
   def index
-    reset_session
+    # reset_session
     @suppliers = Supplier.all
+    @auth_data = oauth_data
   end
 
   # GET /suppliers/1
@@ -26,7 +28,21 @@ class SuppliersController < ApplicationController
   # POST /suppliers.json
   def create
     @supplier = Supplier.new(supplier_params)
-
+    qbo = QboApi.new(oauth_data)
+    vendor = {  "PrimaryPhone": {
+                                "FreeFormNumber": supplier_params[:phone]
+                              },
+              "PrimaryEmailAddr": 
+                                {
+                                "Address": supplier_params[:email]
+                                },
+              "WebAddr":        { 
+                                "URI": supplier_params[:website]
+                              },
+                "DisplayName": supplier_params[:name],
+                "CompanyName": supplier_params[:name]
+    }
+    response = qbo.create(:vendor, payload: vendor)
     respond_to do |format|
       if @supplier.save
         format.html { redirect_to @supplier, notice: 'Supplier was successfully created.' }
@@ -62,27 +78,27 @@ class SuppliersController < ApplicationController
     end
   end
 
-  def authenticate
-    callback = oauth_callback_suppliers_url
-    token = QB_OAUTH_CONSUMER.get_request_token(:oauth_callback => callback)
-    session[:qb_request_token] = Marshal.dump(token)
-    redirect_to("https://appcenter.intuit.com/Connect/Begin?oauth_token=#{token.token}") and return
-  end
-
-def oauth_callback
-	at = Marshal.load(session[:qb_request_token]).get_access_token(:oauth_verifier => params[:oauth_verifier])
-	session[:token] = at.token
-	session[:secret] = at.secret
-	session[:realm_id] = params['realmId']
-  redirect_to root_url, notice: "Your Quickbooks Account has been succesfully linked"
-	# store the token, secret & RealmID somewhere for this user, you will need all 3 to work with Quickbooks-Ruby
-end
+  
 
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_supplier
       @supplier = Supplier.find(params[:id])
     end
+
+    def oauth_data
+  {
+    consumer_key: CONSUMER_KEY,
+    consumer_secret: CONSUMER_SECRET,
+    token: session[:token],
+    token_secret: session[:secret],
+    realm_id: session[:realm_id]
+  }
+end
+
+# def set_qbo
+  
+# end
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def supplier_params

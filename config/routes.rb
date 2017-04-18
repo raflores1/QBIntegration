@@ -1,10 +1,9 @@
 Rails.application.routes.draw do
   resources :suppliers do 
-    collection do 
-     get 'authenticate'
-     get 'oauth_callback'
-    end
   end
+
+  get '/auth/quickbooks', to: 'sessions#authenticate'
+  get '/auth/quickbooks/callback', to: 'sessions#oauth_callback'
 
 root 'suppliers#index'
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
