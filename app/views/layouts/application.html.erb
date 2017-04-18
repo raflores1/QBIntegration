@@ -9,9 +9,6 @@
   </head>
 
   <body>
-  <% if session[:token]%>
-  <p><%= @auth_data %></p>
-  <% end %>
 <% unless session[:token] %>
   <ipp:connectToIntuit></ipp:connectToIntuit>
 <% end %>

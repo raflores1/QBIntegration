@@ -7,7 +7,6 @@ class SuppliersController < ApplicationController
   def index
     # reset_session
     @suppliers = Supplier.all
-    @auth_data = oauth_data
   end
 
   # GET /suppliers/1
@@ -42,9 +41,10 @@ class SuppliersController < ApplicationController
                 "DisplayName": supplier_params[:name],
                 "CompanyName": supplier_params[:name]
     }
-    response = qbo.create(:vendor, payload: vendor)
+    
     respond_to do |format|
       if @supplier.save
+        response = qbo.create(:vendor, payload: vendor)
         format.html { redirect_to @supplier, notice: 'Supplier was successfully created.' }
         format.json { render :show, status: :created, location: @supplier }
       else
