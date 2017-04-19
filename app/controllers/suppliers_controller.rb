@@ -1,5 +1,6 @@
 class SuppliersController < ApplicationController
   before_action :set_supplier,  only: [:show, :edit, :update, :destroy]
+  protect_from_forgery :except => [:webhooks]
   # before_action :set_qbo, only: [:edit, :update, :destroy, :create]
 
   # GET /suppliers
@@ -78,6 +79,13 @@ class SuppliersController < ApplicationController
     end
   end
 
+def webhooks
+  request.body.rewind
+  data = request.body.read
+  puts JSON.parse data
+  verified = verify_webhook(data, request.env['HTTP_INTUIT_SIGNATURE'])
+  puts "Verified: #{verified}"
+end
   
 
   private
