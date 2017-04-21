@@ -27,25 +27,9 @@ class SuppliersController < ApplicationController
   # POST /suppliers
   # POST /suppliers.json
   def create
-    @supplier = Supplier.new(supplier_params)
-    qbo = QboApi.new(oauth_data)
-    vendor = {  "PrimaryPhone": {
-                                "FreeFormNumber": supplier_params[:phone]
-                              },
-              "PrimaryEmailAddr": 
-                                {
-                                "Address": supplier_params[:email]
-                                },
-              "WebAddr":        { 
-                                "URI": supplier_params[:website]
-                              },
-                "DisplayName": supplier_params[:name],
-                "CompanyName": supplier_params[:name]
-    }
-    
+    @supplier = current_tenant.suppliers.new(supplier_params)
     respond_to do |format|
       if @supplier.save
-        response = qbo.create(:vendor, payload: vendor)
         format.html { redirect_to @supplier, notice: 'Supplier was successfully created.' }
         format.json { render :show, status: :created, location: @supplier }
       else
@@ -94,18 +78,22 @@ end
       @supplier = Supplier.find(params[:id])
     end
 
-    def oauth_data
-  {
-    consumer_key: CONSUMER_KEY,
-    consumer_secret: CONSUMER_SECRET,
-    token: session[:token],
-    token_secret: session[:secret],
-    realm_id: session[:realm_id]
-  }
-end
+    def current_tenant
+      tenant=Tenant.first 
+      tenant
+    end
 
-# def set_qbo
-  
+# def oauth_data
+#   {
+#     consumer_key: CONSUMER_KEY,
+#     consumer_secret: CONSUMER_SECRET,
+#     token: current_tenant.token,
+#     token_secret: current_tenant.token_secret,
+#     realmId: current_tenant.company_id
+#     # token: session[:token],
+#     # token_secret: session[:secret],
+#     # realm_id: session[:realm_id]
+#   }
 # end
 
     # Never trust parameters from the scary internet, only allow the white list through.

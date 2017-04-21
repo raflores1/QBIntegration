@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170413220802) do
+ActiveRecord::Schema.define(version: 20170421200841) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -22,6 +22,19 @@ ActiveRecord::Schema.define(version: 20170413220802) do
     t.string   "website"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "qbo_id"
+    t.integer  "tenant_id"
+    t.index ["tenant_id"], name: "index_suppliers_on_tenant_id", using: :btree
   end
 
+  create_table "tenants", force: :cascade do |t|
+    t.string   "name"
+    t.string   "token"
+    t.string   "token_secret"
+    t.string   "company_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_foreign_key "suppliers", "tenants"
 end
